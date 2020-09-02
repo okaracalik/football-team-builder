@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header class="bg-green-13 text-grey-10 q-my-md" elevated>
+    <q-header class="bg-green-13 text-grey-10" elevated>
       <q-toolbar >
         <q-btn
           flat
@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Fifa Team Builder
+          Football Team Builder
         </q-toolbar-title>
 
       </q-toolbar>

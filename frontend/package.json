@@ -1,8 +1,8 @@
 {
-  "name": "fifa-team-builder",
+  "name": "football-team-builder",
   "version": "0.0.1",
-  "description": "Build your Fifa team.",
-  "productName": "Fifa Team Builder",
+  "description": "Build your Football team.",
+  "productName": "Football Team Builder",
   "author": "Orkut Karacalik <orkutkaracalik@hotmail.com>",
   "private": true,
   "scripts": {

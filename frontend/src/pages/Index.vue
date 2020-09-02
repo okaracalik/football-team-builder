@@ -2,7 +2,7 @@
   <q-page class="flex flex-center">
     <q-banner class="bg-green-13 text-black q-ma-lg" rounded>
       <h4>
-        <q-icon name="mdi-party-popper" /> Welcome to the Fifa Team Builder App
+        <q-icon name="mdi-party-popper" /> Welcome to the Football Team Builder App
       </h4>
       <h5>
         You can ...
