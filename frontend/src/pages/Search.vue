@@ -62,7 +62,7 @@ export default {
       },
       uniqueKey: 'id',
       columns: [
-        { name: 'photo', field: 'photo', label: 'Photo' },
+        { name: 'photo', field: 'photo', label: 'Photo', style: 'width: 50px' },
         { name: 'name', field: 'name', label: 'Name' },
         { name: 'club', field: 'club', label: 'Club' },
         { name: 'age', field: 'age', label: 'Age' },

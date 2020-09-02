@@ -11,7 +11,7 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
-        <q-toolbar-title>
+        <q-toolbar-title class="text-bold">
           Football Team Builder
         </q-toolbar-title>
 
