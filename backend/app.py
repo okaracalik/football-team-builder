@@ -30,8 +30,7 @@ MYSQL_DB = 'fifa'
 ## DONE: sqlalchemy querying: name, club & nationality
 ## DONE: sqlalchemy in wsgi
 ## DONE: prep response:  Name, Age, Nationality, Club, Photo (should display it), Overall (score), Value
-## TODO: fix photo links
-## TODO: fix flag links
+## DONE: fix photo links
 
 
 def init_mysql_engine(user, pwd, host, port, db):
@@ -52,9 +51,16 @@ def application (environ, start_response):
 
     paths = [p for p in environ['PATH_INFO'].split('/') if p != '']
 
+    headers = []
+    origin = environ.get("HTTP_ORIGIN")
+
+    cors = origin
+    if cors:
+      headers.append(("Access-Control-Allow-Origin", origin))
+
     if len(paths) == 0:
       status = '200 OK'
-      headers = [('Content-Type', json_c_type)]
+      headers.append(('Content-Type', json_c_type))
       payload = {f'message': f"Server works!"}
       response = json.dumps(payload, indent=4)
 
@@ -79,14 +85,20 @@ def application (environ, start_response):
               limit = int(query.get('limit', [10])[0])
               skip = int(query.get('skip', [0])[0])
 
-              # query
-              rows = session.query(Player) \
-                      .filter(Player.name.ilike(f'%{name}%')) \
-                      .filter(Player.club.ilike(f'%{club}%')) \
-                      .filter(Player.nationality.ilike(f'%{nationality}%')) \
-                      .order_by(Player.overall.desc()) \
-                      .offset(skip) \
-                      .limit(limit)
+              rows_all = session.query(Player)
+
+              if name != '':
+                rows_all = rows_all.filter(Player.name.ilike(f'%{name}%'))
+              if club != '':
+                rows_all = rows_all.filter(Player.club.ilike(f'%{club}%'))
+              if nationality != '':
+                rows_all = rows_all.filter(Player.nationality.ilike(f'%{nationality}%'))
+
+              rows_all = rows_all.order_by(Player.overall.desc(), Player.value.desc())
+
+              rows =  rows_all \
+                        .offset(skip) \
+                        .limit(limit)
 
               # result set
               records = [dict(id=r.id, name=r.name, nationality=r.nationality,
@@ -96,9 +108,9 @@ def application (environ, start_response):
 
               # 'next': urlencode # f"{environ['SERVER_NAME']}:{environ['SERVER_PORT']}/{module}/? ",
               status = '200 OK'
-              headers = [('Content-Type', json_c_type)]
+              headers.append(('Content-Type', json_c_type))
               payload = {
-                'count': session.query(Player).count(),
+                'count': rows_all.count(),
                 'results': records
               }
               response = json.dumps(payload, indent=4)
@@ -109,19 +121,22 @@ def application (environ, start_response):
 
             except Exception:
               status = '500 Internal Server Error'
-              headers = [('Content-Type', json_c_type)]
+              headers.append(('Content-Type', json_c_type))
               payload = {f'message': f"Oops! Something went wrong!"}
+
+              response = json.dumps(payload, indent=4)
 
               start_response(status, headers)
 
               return [response.encode()]
 
           elif len(paths) == 2:
+            ## DONE: img
             ## TODO: get by id
             ## TODO: team builder
             status = '501 Not Implemented'
-            headers = [('Content-Type', json_c_type)]
-            payload = {'message': f"Method not implemented yet for `{environ['PATH_INFO']}`!"}
+            headers.append(('Content-Type', json_c_type))
+            payload = {'message': f"Method not implemented yet for `{environ['PATH_INFO']}`!", 'path': paths}
 
             response = json.dumps(payload, indent=4)
 
@@ -131,7 +146,7 @@ def application (environ, start_response):
 
           else:
             status = '403 Forbidden'
-            headers = [('Content-Type', json_c_type)]
+            headers.append(('Content-Type', json_c_type))
             payload = {'message': f"You are not allowed to make request to `{environ['PATH_INFO']}`!"}
 
             response = json.dumps(payload, indent=4)
@@ -142,7 +157,6 @@ def application (environ, start_response):
 
         elif method == 'HEAD':
           status = '200 OK'
-          headers = []
 
           start_response(status, headers)
 
@@ -150,7 +164,7 @@ def application (environ, start_response):
 
         else:
           status = '405 Method Not Allowed'
-          headers = [('Content-Type', json_c_type)]
+          headers.append(('Content-Type', json_c_type))
           payload = {f'message': f"You are not allowed to make request with {environ['REQUEST_METHOD']} to `{environ['PATH_INFO']}`!"}
 
           response = json.dumps(payload, indent=4)
@@ -159,9 +173,19 @@ def application (environ, start_response):
 
           return [response.encode()]
 
+
+      elif paths[0] == 'assets':
+
+        status = '200 OK'
+        headers.append(('Content-Type', 'image/png'))
+
+        start_response(status, headers)
+
+        return [open(f"./{environ['PATH_INFO']}", "rb").read()]
+
       else:
         status = '403 Forbidden'
-        headers = [('Content-Type', json_c_type)]
+        headers.append(('Content-Type', json_c_type))
         payload = {'message': f"You are not allowed to make request to `{environ['PATH_INFO']}`!"}
 
         response = json.dumps(payload, indent=4)
