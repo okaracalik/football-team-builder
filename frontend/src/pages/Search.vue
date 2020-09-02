@@ -30,7 +30,7 @@
     >
       <template v-slot:body-cell-photo="props">
         <q-td :props="props">
-          <img
+          <q-img
             :src="`http://localhost:8051${props.value}`"
           />
         </q-td>
@@ -45,7 +45,7 @@ import { createNamespacedHelpers } from 'vuex'
 const { mapState, mapActions } = createNamespacedHelpers('player')
 
 export default {
-  name: 'PlayerList',
+  name: 'Search',
   mixins: [],
   props: {},
   data () {
@@ -57,7 +57,7 @@ export default {
       },
       pagination: {
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 15,
         rowsNumber: 1
       },
       uniqueKey: 'id',
@@ -105,7 +105,7 @@ export default {
       }
       this.pagination = {
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 15,
         rowsNumber: 1
       }
       this.onFilter()
