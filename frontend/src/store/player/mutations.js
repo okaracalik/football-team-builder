@@ -2,6 +2,12 @@ export const listLoading = (state) => {
   state.list.loading = true
 }
 
+export const listReset = (state) => {
+  state.list.loading = false
+  state.list.success = null
+  state.list.error = null
+}
+
 export const listSuccess = (state, payload) => {
   state.list.loading = false
   state.list.success = payload

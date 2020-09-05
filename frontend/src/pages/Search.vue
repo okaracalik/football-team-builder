@@ -21,6 +21,7 @@
     </div>
     <!-- content -->
     <q-table
+      v-if="playerList.success"
       dense
       :data="playerList.success.results"
       :columns="columns"
@@ -36,6 +37,39 @@
         </q-td>
       </template>
     </q-table>
+    <div v-else-if="playerList.error" class="flex flex-center vertically-expanding">
+        <q-card class="bg-red-13 text-white">
+          <q-card-section>
+            <div class="text-h6"><q-icon name="warning" /> Error</div>
+          </q-card-section>
+          <q-card-section class="q-pt-none">
+            Ooops! Something went wrong!
+          </q-card-section>
+        </q-card>
+      </div>
+      <div v-else-if="playerList.loading" class="flex flex-center vertically-expanding">
+        <q-card class="bg-teal-1 text-black">
+          <q-card-section class="">
+            <span class="text-strong">
+              <q-spinner
+                color="primary"
+                size="3em"
+                :thickness="3"
+              /> Loading...
+            </span>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div v-else class="flex flex-center vertically-expanding">
+        <q-card class="bg-info text-black">
+          <q-card-section>
+            <div class="text-h6"><q-icon name="info" /> Info</div>
+          </q-card-section>
+          <q-card-section class="q-pt-none">
+            <q-icon name="mdi-arrow-top-left" /> Please click search button to see players.
+          </q-card-section>
+        </q-card>
+      </div>
   </q-page>
 </template>
 

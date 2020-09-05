@@ -16,45 +16,45 @@
       </q-input>
       <q-btn color="positive" label="Build" icon="mdi-hammer-screwdriver" @click="build()" />
     </div>
-    <div v-if="playerList.success" class="q-ma-xs bg-red-2 vertically-expanding fill-height-or-more">
+    <div class="q-ma-xs bg-red-2 vertically-expanding fill-height-or-more">
       <div class="bg-cyan-2"></div>
       <div class="bg-yellow-2 q-gutter-md column">
-        <q-list class="full-width" separator v-ripple >
-          <q-item v-for="(item, index) in formation.selected.value" :key="index">
-            <q-item-section>
-              {{ item.toUpperCase() }}
-            </q-item-section>
-            <q-item-section avatar>
-              <q-avatar>
-                <img :src="`http://localhost:8051${playerList.success.results[item].photo}`" />
-              </q-avatar>
-            </q-item-section>
-            <q-item-section>
-              {{ playerList.success.results[item].name }}
-            </q-item-section>
-            <q-item-section>
-              {{ playerList.success.results[item].nationality }}
-            </q-item-section>
-            <q-item-section>
-              {{ playerList.success.results[item].age }}
-            </q-item-section>
-            <q-item-section>
-              {{ playerList.success.results[item].club }}
-            </q-item-section>
-            <q-item-section>
-              <span>
-                <q-icon name="star" /> {{ formatMoney(playerList.success.results[item].overall) }}
-              </span>
-            </q-item-section>
-            <q-item-section class="text-right">
-              <span>
-                <q-icon name="mdi-currency-eur" /> {{ formatMoney(playerList.success.results[item].value) }}
-              </span>
-            </q-item-section>
-          </q-item>
-        </q-list>
-        <div class="flex flex-center vertically-expanding">
-          <div class="row">
+        <div v-if="playerList.success" class="q-gutter-md">
+          <q-list class="full-width" separator v-ripple >
+            <q-item v-for="(item, index) in formation.selected.value" :key="index">
+              <q-item-section>
+                {{ item.toUpperCase() }}
+              </q-item-section>
+              <q-item-section avatar>
+                <q-avatar>
+                  <img :src="`http://localhost:8051${playerList.success.results[item].photo}`" />
+                </q-avatar>
+              </q-item-section>
+              <q-item-section>
+                {{ playerList.success.results[item].name }}
+              </q-item-section>
+              <q-item-section>
+                {{ playerList.success.results[item].nationality }}
+              </q-item-section>
+              <q-item-section>
+                {{ playerList.success.results[item].age }}
+              </q-item-section>
+              <q-item-section>
+                {{ playerList.success.results[item].club }}
+              </q-item-section>
+              <q-item-section>
+                <span>
+                  <q-icon name="star" /> {{ formatMoney(playerList.success.results[item].overall) }}
+                </span>
+              </q-item-section>
+              <q-item-section class="text-right">
+                <span>
+                  <q-icon name="mdi-currency-eur" /> {{ formatMoney(playerList.success.results[item].value) }}
+                </span>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <div class="flex flex-center">
             <q-chip square color="green-10" text-color="white" icon="star">
               Overall: {{ playerList.success.total_overall }}
             </q-chip>
@@ -62,6 +62,40 @@
               Value: {{ formatMoney(playerList.success.total_value) }}
             </q-chip>
           </div>
+        </div>
+        <div v-else-if="playerList.error" class="flex flex-center vertically-expanding">
+          <q-card class="bg-red-13 text-white"
+          >
+            <q-card-section>
+              <div class="text-h6"><q-icon name="warning" /> Error</div>
+            </q-card-section>
+            <q-card-section class="q-pt-none">
+              Ooops! Something went wrong!
+            </q-card-section>
+          </q-card>
+        </div>
+        <div v-else-if="playerList.loading" class="flex flex-center vertically-expanding">
+          <q-card class="bg-secondary text-white">
+            <q-card-section class="">
+              <span class="text-strong">
+                <q-spinner
+                  color="primary"
+                  size="3em"
+                  :thickness="3"
+                /> Loading...
+              </span>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div v-else class="flex flex-center vertically-expanding">
+          <q-card class="bg-info text-black">
+            <q-card-section>
+              <div class="text-h6"><q-icon name="info" /> Info</div>
+            </q-card-section>
+            <q-card-section class="q-pt-none">
+              <q-icon name="mdi-arrow-top-left" /> Please click build button to create a team.
+            </q-card-section>
+          </q-card>
         </div>
       </div>
     </div>
@@ -81,7 +115,6 @@ const { mapState, mapActions } = createNamespacedHelpers('player')
 //  'lwb', 'ldm', 'cdm', 'rdm', 'rwb',
 //  'lb', 'lcb', 'cb', 'rcb', 'rb', 'gk']
 // TODO: pitch
-// TODO: loading state
 export default {
   name: 'Team',
   data () {
@@ -107,7 +140,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      buildTeam: 'buildTeam'
+      buildTeam: 'buildTeam',
+      resetList: 'resetList'
     }),
     build () {
       const regex = /,|_| /gi
@@ -120,6 +154,9 @@ export default {
     formatMoney (amount) {
       return amount.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
     }
+  },
+  created () {
+    this.resetList()
   }
 }
 </script>
