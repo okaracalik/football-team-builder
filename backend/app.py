@@ -10,22 +10,17 @@ import pandas as pd
 from helper import compute_best_lineup, get_database_session, init_mysql_engine
 from models import Player
 
-with open('config.json', 'r') as f:
-  CONFIG = json.load(f)
+try:
+  with open('./config.json', 'r') as f:
+    CONFIG = json.load(f)
 
-# from pprint import pprint
-
-# METHODS
-# CONTENT TYPES
-# STATUS
-# GENERIC MESSAGES
-# PATHS
-
-engine = init_mysql_engine(CONFIG['MYSQL_USER'],
-                           CONFIG['MYSQL_PWD'],
-                           CONFIG['MYSQL_HOST'],
-                           CONFIG['MYSQL_PORT'],
-                           CONFIG['MYSQL_DB'])
+  engine = init_mysql_engine(CONFIG['MYSQL_USER'],
+                            CONFIG['MYSQL_PWD'],
+                            CONFIG['MYSQL_HOST'],
+                            CONFIG['MYSQL_PORT'],
+                            CONFIG['MYSQL_DB'])
+except Exception as identifier:
+  print(identifier)
 
 def application (environ, start_response):
 
@@ -113,7 +108,9 @@ def application (environ, start_response):
 
               return [response.encode()]
 
-            except Exception:
+            except Exception as e:
+
+              print(e)
               status = '500 Internal Server Error'
               headers.append(('Content-Type', json_c_type))
               payload = {f'message': f"Oops! Something went wrong!"}
@@ -183,8 +180,9 @@ def application (environ, start_response):
 
                 return [response.encode()]
 
-              except Exception:
+              except Exception as e:
 
+                print(e)
                 status = '500 Internal Server Error'
                 headers.append(('Content-Type', json_c_type))
                 payload = {f'message': f"Oops! Something went wrong!"}
@@ -281,7 +279,14 @@ def application (environ, start_response):
 
 if __name__ == "__main__":
 
-  httpd = make_server('localhost', 8051, application)
+  try:
+    httpd = make_server('0.0.0.0', 8051, application)
 
-  # Now it is serve_forever() in instead of handle_request()
-  httpd.serve_forever()
+    # Now it is serve_forever() in instead of handle_request()
+    print('Server running!')
+
+    httpd.serve_forever()
+
+  except Exception as identifier:
+    print(identifier)
+
