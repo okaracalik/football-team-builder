@@ -16,9 +16,8 @@
       </q-input>
       <q-btn color="positive" label="Build" icon="mdi-hammer-screwdriver" @click="build()" />
     </div>
-    <div class="q-ma-xs bg-red-2 vertically-expanding fill-height-or-more">
-      <div class="bg-cyan-2"></div>
-      <div class="bg-yellow-2 q-gutter-md column">
+    <div class="q-ma-xs vertically-expanding fill-height-or-more">
+      <div class="q-gutter-md column">
         <div v-if="playerList.success" class="q-gutter-md">
           <q-list class="full-width" separator v-ripple >
             <q-item v-for="(item, index) in formation.selected.value" :key="index">
@@ -93,7 +92,7 @@
               <div class="text-h6"><q-icon name="info" /> Info</div>
             </q-card-section>
             <q-card-section class="q-pt-none">
-              <q-icon name="mdi-arrow-top-left" /> Please click build button to create a team.
+              <q-icon name="mdi-arrow-up" /> Please click build button to create a team.
             </q-card-section>
           </q-card>
         </div>
