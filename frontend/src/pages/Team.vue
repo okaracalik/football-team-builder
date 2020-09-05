@@ -20,13 +20,36 @@
       <div class="q-gutter-md column">
         <div v-if="playerList.success" class="q-gutter-md">
           <q-list class="full-width" separator v-ripple >
-            <q-item v-for="(item, index) in formation.selected.value" :key="index">
+            <q-item class="row items-center text-center bg-grey-3 text-bold">
+              <q-section class="col">
+                <q-icon name="mdi-soccer"/> Position
+              </q-section>
+              <q-section class="col">
+                <q-icon name="mdi-format-text-variant-outline"/> Name
+              </q-section>
+              <q-section class="col">
+                <q-icon name="mdi-flag"/> Nationality
+              </q-section>
+              <q-section class="col">
+                <q-icon name="mdi-glasses"/> Age
+              </q-section>
+              <q-section class="col">
+                <q-icon name="mdi-security"/> Club
+              </q-section>
+              <q-section class="col">
+                <q-icon name="star"/> Overall
+              </q-section>
+              <q-section class="col text-right">
+                <q-icon name="mdi-currency-eur"/> Value
+              </q-section>
+            </q-item>
+            <q-item class="text-center" v-for="(item, index) in playerList.success.formation" :key="index">
               <q-item-section>
                 {{ item.toUpperCase() }}
               </q-item-section>
               <q-item-section avatar>
                 <q-avatar>
-                  <img :src="`http://localhost:8051${playerList.success.results[item].photo}`" />
+                  <img alt="" :src="`http://localhost:8051${playerList.success.results[item].photo}`" />
                 </q-avatar>
               </q-item-section>
               <q-item-section>
@@ -124,8 +147,8 @@ export default {
           { label: '4-1-2-1-2', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'cdm', 'rcm', 'lcm', 'cam', 'rs', 'ls'] },
           { label: '4-2-4', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'ram', 'rcm', 'lcm', 'lam', 'rs', 'ls'] },
           { label: '4-2-3-1', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'ram', 'rcm', 'lcm', 'lam', 'cam', 'st'] },
-          { label: '3-5-2', value: ['gk', 'rcb', 'DC', 'lcb', 'rm', 'rcm', 'mc', 'lcm', 'lm', 'rs', 'ls'] },
-          { label: '5-3-2', value: ['gk', 'rcb', 'DC', 'lcb', 'wbr', 'wbl', 'rcm', 'lcm', 'cam', 'rs', 'ls'] }
+          { label: '3-5-2', value: ['gk', 'rcb', 'cb', 'lcb', 'rm', 'rcm', 'mc', 'lcm', 'lm', 'rs', 'ls'] },
+          { label: '5-3-2', value: ['gk', 'rcb', 'cb', 'lcb', 'rwb', 'lwb', 'rcm', 'lcm', 'cam', 'rs', 'ls'] }
         ],
         selected: { label: '4-4-2', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'rm', 'rcm', 'lcm', 'lm', 'rs', 'ls'] }
       },
