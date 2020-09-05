@@ -1,8 +1,14 @@
+export const listLoading = (state) => {
+  state.list.loading = true
+}
+
 export const listSuccess = (state, payload) => {
+  state.list.loading = false
   state.list.success = payload
 }
 
 export const listError = (state, payload) => {
+  state.list.loading = false
   state.list.error = payload
 }
 

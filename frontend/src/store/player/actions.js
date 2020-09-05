@@ -1,9 +1,10 @@
-import HTTP from '../../services/http'
+import HTTP, { base } from '../../services/http'
 
 const moduleName = 'players'
 const Service = HTTP(moduleName)
 
 export const find = ({ commit }, query = null) => {
+  commit('listLoading')
   Service.find(query)
     .then(success => {
       commit('listSuccess', success.data)
@@ -20,5 +21,15 @@ export const get = ({ commit }, id) => {
     })
     .catch(err => {
       commit('itemError', err.response.data)
+    })
+}
+
+export const buildTeam = ({ commit }, data) => {
+  Service.custom({ method: 'post', url: `${base}/players/team`, data })
+    .then(success => {
+      commit('listSuccess', success.data)
+    })
+    .catch(err => {
+      commit('listError', err.response)
     })
 }

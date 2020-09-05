@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const base = 'http://localhost:8051'
+export const base = 'http://localhost:8051'
 // const base = 'https://localhost/api/organizer'
 // const base = 'https://orkutkaracalik.info/api/fifa'
 
@@ -19,6 +19,9 @@ const Service = name => ({
   },
   remove (id) {
     return axios.delete(`${base}/${name}/${id}`)
+  },
+  custom (options) {
+    return axios(options)
   }
 })
 
