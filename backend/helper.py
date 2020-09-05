@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 def init_mysql_engine(user, pwd, host, port, db):
-  return create_engine(f'mysql+mysqlconnector://{user}:{pwd}@{host}:{port}/{db}')
+  return create_engine(f'mysql+mysqlconnector://{user}:{pwd}@{host}:{port}/{db}?charset=utf8mb4')
 
 
 def get_database_session(engine):

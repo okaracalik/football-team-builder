@@ -1,0 +1,40 @@
+version: '2.1'
+
+services:
+  database-mysql:
+    build: database
+    ports:
+      - "3306:3306"
+    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    container_name: database_mysql_container
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+    volumes:
+      - my-data:/var/lib/mysql
+    networks:
+      - backend
+    restart: always
+  football-team-builder-backend:
+    build: backend
+    ports:
+      - "8051:8051"
+    container_name: football-team-builder-backend-container
+    restart: always
+    depends_on:
+      - database-mysql
+    networks:
+      - backend
+      - frontend
+  football-team-builder-frontend:
+    build: frontend
+    ports:
+      - "8083:8083"
+    container_name: football-team-builder-frontend-container
+    restart: always
+    networks:
+      - frontend
+networks:
+  backend:
+  frontend:
+volumes:
+  my-data:
