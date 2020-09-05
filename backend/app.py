@@ -4,15 +4,14 @@ import json
 from html import escape
 from urllib.parse import parse_qs, urlencode
 from wsgiref.simple_server import make_server
+
 import pandas as pd
-from helper import get_database_session, init_mysql_engine, compute_best_lineup
+
+from helper import compute_best_lineup, get_database_session, init_mysql_engine
 from models import Player
 
-MYSQL_USER = 'root'
-MYSQL_PWD = ''
-MYSQL_HOST = 'localhost'
-MYSQL_PORT = '3306'
-MYSQL_DB = 'fifa'
+with open('config.json', 'r') as f:
+  CONFIG = json.load(f)
 
 # from pprint import pprint
 
@@ -22,27 +21,11 @@ MYSQL_DB = 'fifa'
 # GENERIC MESSAGES
 # PATHS
 
-## DONE: normalize column names
-## DONE: sqlalchemy ORM
-## DONE: sqlalchemy session
-## DONE: MySQL
-## DONE: sqlalchemy querying: name, club & nationality
-## DONE: sqlalchemy in wsgi
-## DONE: prep response:  Name, Age, Nationality, Club, Photo (should display it), Overall (score), Value
-## DONE: fix photo links
-
-
-engine = init_mysql_engine(MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_PORT, MYSQL_DB)
-
-def decode_byte_dict(payload):
-  result = {}
-
-  for key, value in payload.items():
-    key_decoded = key.decode('UTF-8')
-    value_decoded = value[0].decode('UTF-8') if len(value) < 2 else [v.decode('UTF-8') for v in value]
-    result[key_decoded] = value_decoded
-
-  return result
+engine = init_mysql_engine(CONFIG['MYSQL_USER'],
+                           CONFIG['MYSQL_PWD'],
+                           CONFIG['MYSQL_HOST'],
+                           CONFIG['MYSQL_PORT'],
+                           CONFIG['MYSQL_DB'])
 
 def application (environ, start_response):
 
