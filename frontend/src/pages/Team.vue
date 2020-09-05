@@ -49,7 +49,7 @@
               </q-item-section>
               <q-item-section avatar>
                 <q-avatar>
-                  <img alt="" :src="`http://localhost:8051${playerList.success.results[item].photo}`" />
+                  <img alt="" :src="`${baseUrl}${playerList.success.results[item].photo}`" />
                 </q-avatar>
               </q-item-section>
               <q-item-section>
@@ -127,6 +127,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex'
 import { isString } from 'lodash'
+import { baseURL } from '../services/http'
 
 const { mapState, mapActions } = createNamespacedHelpers('player')
 
@@ -141,6 +142,7 @@ export default {
   name: 'Team',
   data () {
     return {
+      baseUrl: baseURL,
       formation: {
         options: [
           { label: '4-4-2', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'rm', 'rcm', 'lcm', 'lm', 'rs', 'ls'] },

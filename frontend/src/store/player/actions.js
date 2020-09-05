@@ -1,4 +1,4 @@
-import HTTP, { base } from '../../services/http'
+import HTTP, { baseURL } from '../../services/http'
 
 const moduleName = 'players'
 const Service = HTTP(moduleName)
@@ -32,7 +32,7 @@ export const get = ({ commit }, id) => {
 export const buildTeam = ({ commit }, data) => {
   commit('listReset')
   commit('listLoading')
-  Service.custom({ method: 'post', url: `${base}/players/team`, data })
+  Service.custom({ method: 'post', url: `${baseURL}/players/team`, data })
     .then(success => {
       commit('listSuccess', success.data)
     })

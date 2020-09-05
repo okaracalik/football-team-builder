@@ -32,7 +32,7 @@
       <template v-slot:body-cell-photo="props">
         <q-td :props="props">
           <q-img
-            :src="`http://localhost:8051${props.value}`"
+            :src="`${baseUrl}${props.value}`"
           />
         </q-td>
       </template>
@@ -75,6 +75,7 @@
 
 <script>
 import { createNamespacedHelpers } from 'vuex'
+import { baseURL } from '../services/http'
 
 const { mapState, mapActions } = createNamespacedHelpers('player')
 
@@ -84,6 +85,7 @@ export default {
   props: {},
   data () {
     return {
+      baseUrl: baseURL,
       search: {
         name: '',
         club: '',
