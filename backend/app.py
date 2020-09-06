@@ -4,6 +4,7 @@ import json
 from html import escape
 from urllib.parse import parse_qs, urlencode
 from wsgiref.simple_server import make_server
+from os import stat
 
 import pandas as pd
 
@@ -91,7 +92,7 @@ def application (environ, start_response):
               }
 
               return response_factory \
-                      .create(200) \
+                      .create(200, origin, method) \
                       .get_response(payload, start_response)
 
             except Exception as e:
@@ -205,14 +206,40 @@ def application (environ, start_response):
       # /assets/
       elif paths[0] == 'assets':
 
-        # TODO: if get
-        # TODO: if none found
-        status = '200 OK'
-        headers.append(('Content-Type', 'image/png'))
+        if method == 'GET':
+          status = '200 OK'
 
-        start_response(status, headers)
 
-        return [open(f"./{environ['PATH_INFO']}", "rb").read()]
+          try:
+            headers.append(('Content-Type', 'image/png'))
+
+            start_response(status, headers)
+
+            with open(f"./{environ['PATH_INFO']}", "rb") as f:
+              img = f.read()
+              size = stat(f"./{environ['PATH_INFO']}").st_size
+
+            if size == 0:
+              with open(f"./assets/players/000000.png", "rb") as f:
+                img = f.read()
+
+            return [img]
+
+          except Exception as e:
+
+            payload = {'message': f"Image is not available! => {e}"}
+
+            return response_factory \
+                    .create(404) \
+                    .get_response(payload, start_response)
+
+          else:
+
+            payload = {f'message': f"You are not allowed to make request with {environ['REQUEST_METHOD']} to `{environ['PATH_INFO']}`!"}
+
+            return response_factory \
+                    .create(405) \
+                    .get_response(payload, start_response)
 
       # /*
       else:
@@ -233,7 +260,7 @@ if __name__ == "__main__":
     httpd = make_server(HOST, PORT, application)
 
     print('Server running!')
-    print('http://localhost:{PORT}')
+    print(f'http://localhost:{PORT}')
 
     httpd.serve_forever()
 

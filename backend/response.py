@@ -37,7 +37,7 @@ class Response(object):
       self.status,
       self.headers
     )
-    print(self.headers)
+
     if payload:
       return [response.encode()]
     else:
