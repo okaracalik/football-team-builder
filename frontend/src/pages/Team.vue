@@ -14,6 +14,7 @@
           <q-icon name="mdi-currency-eur" />
         </template>
       </q-input>
+      <q-toggle v-model="include_free_agents" label="Include Free Agents" />
       <q-btn color="positive" label="Build" icon="mdi-hammer-screwdriver" @click="build()" />
     </div>
     <div class="q-ma-xs vertically-expanding fill-height-or-more">
@@ -154,7 +155,8 @@ export default {
         ],
         selected: { label: '4-4-2', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'rm', 'rcm', 'lcm', 'lm', 'rs', 'ls'] }
       },
-      budget: 1000000
+      budget: 1000000,
+      include_free_agents: false
     }
   },
   computed: {
@@ -172,7 +174,8 @@ export default {
       const budget = isString(this.budget) ? parseInt(this.budget.replace(regex, '')) : this.budget
       this.buildTeam({
         formation: this.formation.selected.value,
-        budget
+        budget,
+        include_free_agents: this.include_free_agents
       })
     },
     formatMoney (amount) {

@@ -55,7 +55,7 @@ The app is deployed on [Digital Ocean](https://www.digitalocean.com/).
       cd backend
       python app.py
       ```
-      ⚠️ Make sure you installed: `python` 3.7 and packages in `backend/requirements.txt`.
+      ⚠️ Make sure you installed: `python` 3.7, `MySQL` and packages in `backend/requirements.txt`.
   - 2nd terminal:
     - ```bash
       cd frontend

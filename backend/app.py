@@ -12,6 +12,16 @@ from helper import compute_best_lineup, get_database_session, init_mysql_engine
 from models import Player
 from response import ResponseFactory
 
+POSITIONS = [
+  'ls', 'st', 'rs',
+  'lw', 'lf', 'cf', 'rf', 'rw',
+  'lam', 'cam', 'ram',
+  'lm', 'lcm', 'cm', 'rcm', 'rm',
+  'lwb', 'ldm', 'cdm', 'rdm', 'rwb',
+  'lb', 'lcb', 'cb', 'rcb', 'rb',
+  'gk'
+]
+
 try:
   with open('./config.json', 'r') as f:
     CONFIG = json.load(f)
@@ -125,8 +135,9 @@ def application (environ, start_response):
             # verify
             formation = body.get('formation', None)
             budget = int(body.get('budget', 0))
+            include_free_agents = body.get('include_free_agents', True)
 
-            if formation is not None and budget >= 1 * 10**6:
+            if formation and all([p in POSITIONS for p in formation]) and budget >= 1 * 10**6:
 
               try:
 
@@ -134,7 +145,9 @@ def application (environ, start_response):
 
                 temp = pd.read_sql_table('players', con=engine)[['id', 'position', 'value', 'overall']] \
                         .dropna(subset=['position']) \
-                        .query(f'position in {formation} and value > 0')
+                        .query(f'position in {formation}')
+
+                temp = temp if include_free_agents else temp.query('value > 0')
 
                 prob, ids = compute_best_lineup(temp, formation, budget)
 
