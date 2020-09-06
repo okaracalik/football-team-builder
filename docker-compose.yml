@@ -5,15 +5,30 @@ services:
     build: database
     ports:
       - "3306:3306"
-    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    command: mysqld --default-authentication-plugin=mysql_native_password
     container_name: database_mysql_container
     environment:
       - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_HOST=%
     volumes:
       - my-data:/var/lib/mysql
+      - ./database/mycustom.cnf:/etc/mysql/conf.d/custom.cnf
     networks:
       - backend
     restart: always
+  nginx:
+    image: nginx
+    container_name: nginx-container
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - frontend
+    volumes:
+        - ./nginx/conf:/etc/nginx/conf.d
+        - ./nginx/ssl:/etc/nginx/ssl
+        - ./nginx/pki:/usr/share/nginx/html/www/.well-known/pki-validation
   football-team-builder-backend:
     build: backend
     ports:
@@ -33,6 +48,8 @@ services:
     restart: always
     networks:
       - frontend
+    depends_on:
+      - nginx
 networks:
   backend:
   frontend:
