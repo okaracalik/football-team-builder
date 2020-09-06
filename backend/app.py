@@ -9,6 +9,7 @@ import pandas as pd
 
 from helper import compute_best_lineup, get_database_session, init_mysql_engine
 from models import Player
+from response import ResponseFactory
 
 try:
   with open('./config.json', 'r') as f:
@@ -19,8 +20,8 @@ try:
                             CONFIG['MYSQL_HOST'],
                             CONFIG['MYSQL_PORT'],
                             CONFIG['MYSQL_DB'])
-except Exception as identifier:
-  print(identifier)
+except Exception as e:
+  print('Server Configuration Error: ', e)
 
 def application (environ, start_response):
 
@@ -34,27 +35,16 @@ def application (environ, start_response):
     origin = environ.get("HTTP_ORIGIN")
     method = environ['REQUEST_METHOD']
 
-    cors = origin
-    preflight = cors and method == "OPTIONS"
-    if cors:
-      headers.append(("Access-Control-Allow-Origin", origin))
-      if preflight:
-        headers.extend([
-            ("Access-Control-Allow-Methods", "POST"),
-            ("Access-Control-Allow-Headers", "Content-Type")
-        ])
+    response_factory = ResponseFactory()
 
     # /
     if len(paths) == 0:
 
-      status = '200 OK'
-      headers.append(('Content-Type', json_c_type))
       payload = {f'message': f"Server works!"}
-      response = json.dumps(payload, indent=4)
 
-      start_response(status, headers)
-
-      return [response.encode()]
+      return response_factory \
+              .create(200) \
+              .get_response(payload, start_response)
 
     else:
       # /players/
@@ -95,44 +85,32 @@ def application (environ, start_response):
                               value=r.value, overall=r.overall )
                         for r in rows]
 
-              # 'next': urlencode # f"{environ['SERVER_NAME']}:{environ['SERVER_PORT']}/{module}/? ",
-              status = '200 OK'
-              headers.append(('Content-Type', json_c_type))
               payload = {
                 'count': rows_all.count(),
                 'results': records
               }
-              response = json.dumps(payload, indent=4)
 
-              start_response(status, headers)
-
-              return [response.encode()]
+              return response_factory \
+                      .create(200) \
+                      .get_response(payload, start_response)
 
             except Exception as e:
 
-              print(e)
-              status = '500 Internal Server Error'
-              headers.append(('Content-Type', json_c_type))
-              payload = {f'message': f"Oops! Something went wrong!"}
+              payload = {f'message': f"Oops! Something went wrong! => {e}"}
 
-              response = json.dumps(payload, indent=4)
-
-              start_response(status, headers)
-
-              return [response.encode()]
+              return response_factory \
+                      .create(500) \
+                      .get_response(payload, start_response)
 
 
           # GET: /players/...
           else:
-            status = '403 Forbidden'
-            headers.append(('Content-Type', json_c_type))
+
             payload = {'message': f"You are not allowed to make request to `{environ['PATH_INFO']}`!"}
 
-            response = json.dumps(payload, indent=4)
-
-            start_response(status, headers)
-
-            return [response.encode()]
+            return response_factory \
+                    .create(403) \
+                    .get_response(payload, start_response)
 
         # POST: /players/
         elif method == 'POST':
@@ -165,8 +143,7 @@ def application (environ, start_response):
                                              flag=r.flag, club=r.club, age=r.age, photo=r.photo,
                                               value=r.value, overall=r.overall )
                             for r in rows}
-                status = '200 OK'
-                headers.append(('Content-Type', json_c_type))
+
                 payload = {
                   'total_overall': sum([r.overall for r in rows]),
                   'total_value': sum([r.value for r in rows]),
@@ -174,82 +151,55 @@ def application (environ, start_response):
                   'results': records
                 }
 
-                response = json.dumps(payload, indent=4)
-
-                start_response(status, headers)
-
-                return [response.encode()]
+                return response_factory \
+                        .create(200, origin, method) \
+                        .get_response(payload, start_response)
 
               except Exception as e:
 
-                print(e)
-                status = '500 Internal Server Error'
-                headers.append(('Content-Type', json_c_type))
-                payload = {f'message': f"Oops! Something went wrong!"}
+                payload = {f'message': f"Oops! Something went wrong! => {e}"}
 
-                response = json.dumps(payload, indent=4)
-
-                start_response(status, headers)
-
-                return [response.encode()]
+                return response_factory \
+                        .create(500) \
+                        .get_response(payload, start_response)
 
 
             else:
 
-              status = '400 Bad Request'
-              headers.append(('Content-Type', json_c_type))
               payload = {
                 'message': f"Please select 11 unique and valid positions and set budget greater than € 1,000,000!",
                 'formation': formation,
                 'budget': budget
               }
 
-              response = json.dumps(payload, indent=4)
-
-              start_response(status, headers)
-
-              return [response.encode()]
+              return response_factory \
+                        .create(400) \
+                        .get_response(payload, start_response)
 
           # POST: /players/...
           else:
 
-            status = '403 Forbidden'
-            headers.append(('Content-Type', json_c_type))
             payload = {'message': f"You are not allowed to make request to `{environ['PATH_INFO']}`!"}
 
-            response = json.dumps(payload, indent=4)
+            return response_factory \
+                    .create(403) \
+                    .get_response(payload, start_response)
 
-            start_response(status, headers)
+        # HEAD/OPTIONS: /players/
+        elif method == 'HEAD' or  method == 'OPTIONS':
 
-            return [response.encode()]
-
-        # HEAD: /players/
-        elif method == 'HEAD':
-          status = '200 OK'
-
-          start_response(status, headers)
-
-          return []
-
-        # HEAD: /players/
-        elif method == 'OPTIONS':
-          status = '200 OK'
-
-          start_response(status, headers)
-
-          return []
+          return response_factory \
+                    .create(200, origin, method) \
+                    .get_response(None, start_response)
 
         # PUT/DELETE/PATCH/OPTIONS: /players/
         else:
-          status = '405 Method Not Allowed'
-          headers.append(('Content-Type', json_c_type))
+
           payload = {f'message': f"You are not allowed to make request with {environ['REQUEST_METHOD']} to `{environ['PATH_INFO']}`!"}
 
-          response = json.dumps(payload, indent=4)
-
-          start_response(status, headers)
-
-          return [response.encode()]
+          return response_factory \
+                  .create(405) \
+                  .get_response(payload, start_response)
 
 
       # /assets/
@@ -266,15 +216,12 @@ def application (environ, start_response):
 
       # /*
       else:
-        status = '403 Forbidden'
-        headers.append(('Content-Type', json_c_type))
+
         payload = {'message': f"You are not allowed to make request to `{environ['PATH_INFO']}`!"}
 
-        response = json.dumps(payload, indent=4)
-
-        start_response(status, headers)
-
-        return [response.encode()]
+        return response_factory \
+                .create(403) \
+                .get_response(payload, start_response)
 
 
 if __name__ == "__main__":
@@ -282,11 +229,10 @@ if __name__ == "__main__":
   try:
     httpd = make_server('0.0.0.0', 8051, application)
 
-    # Now it is serve_forever() in instead of handle_request()
     print('Server running!')
+    print('http://localhost:8051')
 
     httpd.serve_forever()
 
-  except Exception as identifier:
-    print(identifier)
-
+  except Exception as e:
+    print('Server Error: ', e)
