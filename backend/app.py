@@ -227,10 +227,13 @@ def application (environ, start_response):
 if __name__ == "__main__":
 
   try:
-    httpd = make_server('0.0.0.0', 8051, application)
+
+    HOST = '0.0.0.0'
+    PORT = 8051
+    httpd = make_server(HOST, PORT, application)
 
     print('Server running!')
-    print('http://localhost:8051')
+    print('http://localhost:{PORT}')
 
     httpd.serve_forever()
 
