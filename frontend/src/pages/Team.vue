@@ -150,7 +150,7 @@ export default {
           { label: '4-1-2-1-2', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'cdm', 'rcm', 'lcm', 'cam', 'rs', 'ls'] },
           { label: '4-2-4', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'ram', 'rcm', 'lcm', 'lam', 'rs', 'ls'] },
           { label: '4-2-3-1', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'ram', 'rcm', 'lcm', 'lam', 'cam', 'st'] },
-          { label: '3-5-2', value: ['gk', 'rcb', 'cb', 'lcb', 'rm', 'rcm', 'mc', 'lcm', 'lm', 'rs', 'ls'] },
+          { label: '3-5-2', value: ['gk', 'rcb', 'cb', 'lcb', 'rm', 'rcm', 'cm', 'lcm', 'lm', 'rs', 'ls'] },
           { label: '5-3-2', value: ['gk', 'rcb', 'cb', 'lcb', 'rwb', 'lwb', 'rcm', 'lcm', 'cam', 'rs', 'ls'] }
         ],
         selected: { label: '4-4-2', value: ['gk', 'rb', 'rcb', 'lcb', 'lb', 'rm', 'rcm', 'lcm', 'lm', 'rs', 'ls'] }
