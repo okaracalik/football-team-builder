@@ -1,7 +1,6 @@
 import axios from 'axios'
 
-const dev = 'http://localhost:3033'
-// const prod = 'https://localhost/api/football-team-builder'
+const dev = 'http://localhost:8051'
 const prod = 'https://orkutkaracalik.info/api/football-team-builder'
 
 export const baseURL = process.env.DEV ? dev : prod
