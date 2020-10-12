@@ -137,7 +137,8 @@ import TacticsBoard from '../components/TacticsBoard'
 
 const { mapState, mapActions } = createNamespacedHelpers('player')
 
-// COLS_POS = ['ls', 'st', 'rs',
+// COLS_POS = [
+//  'ls', 'st', 'rs',
 //  'lf', 'cf', 'rf',
 //  'lw', 'lam', 'cam', 'ram', 'rw',
 //  'lm', 'lcm', 'cm', 'rcm', 'rm',
@@ -211,9 +212,16 @@ export default {
   min-height: 100%;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   > div {
     flex: 1;
     display: flex;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .board {
+    display: none !important;
   }
 }
 </style>
